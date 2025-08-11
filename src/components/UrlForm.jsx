@@ -1,11 +1,12 @@
 import { useState } from "react";
 import axios from "axios";
-import dotenv from "dotenv";
-dotenv.config();
 
 export default function UrlForm({ onShorten }) {
   const [longUrl, setLongUrl] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Get backend base URL from Vite env variable
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,11 +14,12 @@ export default function UrlForm({ onShorten }) {
 
     try {
       setLoading(true);
-      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/shorten`, { longUrl });
+      const res = await axios.post(`${baseUrl}/shorten`, { longUrl });
       onShorten(res.data.shortUrl);
       setLongUrl("");
-    } catch {
+    } catch (error) {
       alert("Error shortening URL");
+      console.error(error);
     } finally {
       setLoading(false);
     }
